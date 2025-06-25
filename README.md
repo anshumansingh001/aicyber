@@ -59,7 +59,7 @@ AICyber/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/aicyber-platform.git
+   git clone https://github.com/anshumansingh001/aicyber-platform.git
    cd aicyber-platform
    ```
 
