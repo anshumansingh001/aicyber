@@ -39,7 +39,13 @@
     "redis": "latest",
     "uuid": "latest",
     "winston": "latest",
-    "winston-daily-rotate-file": "latest"
+    "winston-daily-rotate-file": "latest",
+    "@tensorflow/tfjs-node": "latest",
+    "onnxruntime-node": "latest",
+    "natural": "latest",
+    "compromise": "latest",
+    "sentiment": "latest",
+    "ml-matrix": "latest"
   },
   "devDependencies": {
     "@types/bull": "latest",
@@ -76,7 +82,10 @@
     "backend",
     "cybersecurity",
     "ai",
-    "security"
+    "security",
+    "machine-learning",
+    "tensorflow",
+    "nlp"
   ],
   "author": "AICyber Team",
   "license": "MIT"
