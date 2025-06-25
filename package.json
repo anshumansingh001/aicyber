@@ -1,0 +1,62 @@
+{
+  "name": "aicyber-platform",
+  "version": "1.0.0",
+  "description": "AI-Powered Cybersecurity Platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:backend dev:frontend",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm-run-all build:backend build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm-run-all test:backend test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm-run-all lint:backend lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "clean": "npm-run-all clean:backend clean:frontend",
+    "clean:backend": "cd backend && npm run clean",
+    "clean:frontend": "cd frontend && npm run clean",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "setup": "npm install && npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "cd backend && npm install",
+    "setup:frontend": "cd frontend && npm install"
+  },
+  "keywords": [
+    "cybersecurity",
+    "ai",
+    "machine-learning",
+    "security",
+    "threat-detection",
+    "anomaly-detection",
+    "nlp",
+    "predictive-analytics"
+  ],
+  "author": "AICyber Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "latest",
+    "npm-run-all": "latest"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/aicyber-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/aicyber-platform/issues"
+  },
+  "homepage": "https://aicyber.com"
+} 
