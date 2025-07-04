@@ -152,6 +152,7 @@ POST /api/auth/refresh
 NODE_ENV=development
 PORT=3001
 API_VERSION=v1
+USE_MOCK_DB=true # set to false to use PostgreSQL
 
 # Database
 DB_HOST=localhost
