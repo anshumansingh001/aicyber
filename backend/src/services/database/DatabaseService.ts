@@ -1,6 +1,7 @@
 import config from '../../config';
 import logger from '../../utils/logger';
 import { DatabaseConnection } from '../../types/global';
+import { PostgresDatabaseService } from './PostgresDatabaseService';
 
 export interface DatabaseService {
   connect(): Promise<void>;
@@ -84,8 +85,9 @@ export class MockDatabaseService extends BaseDatabaseService {
 // Database service factory
 export class DatabaseServiceFactory {
   static create(): DatabaseService {
-    // For now, return mock service
-    // In the future, this could return PostgreSQL, MongoDB, etc.
-    return new MockDatabaseService();
+    if (process.env.USE_MOCK_DB === 'true') {
+      return new MockDatabaseService();
+    }
+    return new PostgresDatabaseService();
   }
-} 
+}
