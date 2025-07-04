@@ -71,7 +71,8 @@
     "rimraf": "latest",
     "ts-jest": "latest",
     "ts-node": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "supertest": "latest"
   },
   "engines": {
     "node": ">=18.0.0",
