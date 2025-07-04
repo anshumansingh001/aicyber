@@ -35,6 +35,8 @@ npm install
 # Setup environment
 cp backend/env.example backend/.env
 # Edit backend/.env with your configuration
+# Set `USE_MOCK_DB=true` to use the in-memory `MockDatabaseService`.
+# Change it to `false` to enable PostgreSQL.
 
 # Start the platform
 npm run dev

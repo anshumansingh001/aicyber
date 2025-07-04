@@ -121,6 +121,7 @@ LOG_LEVEL=debug
 NODE_ENV=production
 PORT=3001
 API_VERSION=v1
+USE_MOCK_DB=true
 
 # Database
 DB_HOST=your-db-host
@@ -160,6 +161,10 @@ LOG_FORMAT=json
 LOG_FILE_PATH=/var/log/aicyber/combined.log
 LOG_ERROR_FILE_PATH=/var/log/aicyber/error.log
 ```
+
+`USE_MOCK_DB` determines the database provider. When set to `true` the
+application uses the in-memory `MockDatabaseService`. Setting it to `false`
+activates the PostgreSQL connection.
 
 ### Docker Deployment
 
@@ -420,6 +425,7 @@ A: Yes, the platform is designed to be extensible and customizable. Contact us f
 NODE_ENV=development
 PORT=3001
 API_VERSION=v1
+USE_MOCK_DB=true
 APP_NAME=AICyber Platform
 APP_DESCRIPTION=AI-Powered Cybersecurity Platform
 
@@ -464,6 +470,9 @@ LOG_FORMAT=combined
 LOG_FILE_PATH=logs/combined.log
 LOG_ERROR_FILE_PATH=logs/error.log
 ```
+
+`USE_MOCK_DB` controls the database layer. Keeping it `true` starts the
+`MockDatabaseService`; setting `false` switches to PostgreSQL.
 
 ### B. API Response Codes
 

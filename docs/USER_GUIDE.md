@@ -137,11 +137,12 @@ cd ../frontend && npm install
 2. **Configure environment variables**:
    ```env
    # Application Configuration
-   NODE_ENV=development
-   PORT=3001
-   API_VERSION=v1
+    NODE_ENV=development
+    PORT=3001
+    API_VERSION=v1
+    USE_MOCK_DB=true
 
-   # Database Configuration
+    # Database Configuration
    DB_HOST=localhost
    DB_PORT=5432
    DB_NAME=aicyber_platform
@@ -158,9 +159,13 @@ cd ../frontend && npm install
    BCRYPT_ROUNDS=12
 
    # AI Services
-   OPENAI_API_KEY=your_openai_api_key
-   AI_MODEL_NAME=gpt-4
-   ```
+    OPENAI_API_KEY=your_openai_api_key
+    AI_MODEL_NAME=gpt-4
+    ```
+
+`USE_MOCK_DB` switches between database modes. When `true`, the backend uses
+`MockDatabaseService` for an in-memory store. Set it to `false` to connect to
+PostgreSQL instead.
 
 ### Step 4: Database Setup
 
