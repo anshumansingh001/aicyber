@@ -119,6 +119,7 @@ curl -X POST http://localhost:3001/api/ai-security/nlp-analysis \
 NODE_ENV=development
 PORT=3001
 API_VERSION=v1
+USE_MOCK_DB=true
 
 # Database
 DB_HOST=localhost
@@ -139,6 +140,9 @@ JWT_EXPIRES_IN=24h
 OPENAI_API_KEY=your_openai_api_key
 AI_MODEL_NAME=gpt-4
 ```
+
+Set `USE_MOCK_DB=true` to run the backend with the `MockDatabaseService` for
+development. Change it to `false` to enable the PostgreSQL connection.
 
 ## Common Issues & Solutions
 

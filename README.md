@@ -152,6 +152,7 @@ POST /api/auth/refresh
 NODE_ENV=development
 PORT=3001
 API_VERSION=v1
+USE_MOCK_DB=true
 
 # Database
 DB_HOST=localhost
@@ -172,6 +173,10 @@ BCRYPT_ROUNDS=12
 OPENAI_API_KEY=your_openai_api_key
 AI_MODEL_NAME=gpt-4
 ```
+
+`USE_MOCK_DB` controls which database service is used. When set to `true`, the
+backend relies on the in-memory `MockDatabaseService`. Set it to `false` to
+connect to PostgreSQL.
 
 ## 🧪 Testing
 
