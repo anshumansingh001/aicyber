@@ -14,8 +14,11 @@
   "dependencies": {
     "react": "latest",
     "react-dom": "latest",
+    "react-router-dom": "latest",
     "react-scripts": "latest",
-    "axios": "latest"
+    "recharts": "latest",
+    "axios": "latest",
+    "socket.io-client": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
