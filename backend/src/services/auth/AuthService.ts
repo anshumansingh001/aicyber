@@ -132,16 +132,19 @@ export class AuthService {
   }
 
   private generateTokens(user: UserRow): TokenPair {
+    const accessOptions: jwt.SignOptions = { expiresIn: config.security.jwtExpiresIn as NonNullable<jwt.SignOptions['expiresIn']> };
+    const refreshOptions: jwt.SignOptions = { expiresIn: '7d' };
+
     const accessToken = jwt.sign(
       { userId: user.id, email: user.email, role: user.role, type: 'access' },
       config.security.jwtSecret,
-      { expiresIn: config.security.jwtExpiresIn }
+      accessOptions
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id, email: user.email, role: user.role, type: 'refresh', jti: crypto.randomUUID() },
       config.security.jwtSecret,
-      { expiresIn: '7d' }
+      refreshOptions
     );
 
     return { accessToken, refreshToken, expiresIn: config.security.jwtExpiresIn };

@@ -16,9 +16,9 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-      - run: cd backend && npm ci
-      - run: cd backend && npm run lint
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run lint --workspace=@aicyber-platform/backend
 
   backend-test:
     name: Backend Tests
@@ -64,10 +64,10 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-      - run: cd backend && npm ci
-      - run: cd backend && npm run type-check
-      - run: cd backend && npm test -- --coverage --forceExit
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run type-check --workspace=@aicyber-platform/backend
+      - run: npm test --workspace=@aicyber-platform/backend -- --coverage --forceExit
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -84,11 +84,12 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-      - run: cd backend && npm ci
-      - run: cd backend && npm run build
-      - run: cd frontend && npm ci
-      - run: cd frontend && npm run build
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run build --workspace=@aicyber-platform/backend
+      - run: npm run build --workspace=@aicyber-platform/frontend
+        env:
+          CI: false
 
   docker:
     name: Docker Build

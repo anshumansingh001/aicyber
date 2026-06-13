@@ -6,7 +6,7 @@ import { NotFoundError } from '../utils/errors';
 
 const router = Router();
 
-router.get('/', asyncHandler(async (req: Request, res: Response) => {
+router.get('/', asyncHandler(async (_req: Request, res: Response) => {
   const rules = await db('alert_rules').orderBy('created_at', 'desc');
   res.json({ success: true, data: rules });
 }));

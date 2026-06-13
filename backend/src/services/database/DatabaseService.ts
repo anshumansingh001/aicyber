@@ -1,7 +1,6 @@
 import config from '../../config';
 import logger from '../../utils/logger';
 import { DatabaseConnection } from '../../types/global';
-import { PostgresDatabaseService } from './PostgresDatabaseService';
 
 export interface DatabaseService {
   connect(): Promise<void>;
@@ -85,9 +84,12 @@ export class MockDatabaseService extends BaseDatabaseService {
 // Database service factory
 export class DatabaseServiceFactory {
   static create(): DatabaseService {
-    if (process.env.USE_MOCK_DB === 'true') {
+    if (process.env['USE_MOCK_DB'] === 'true') {
       return new MockDatabaseService();
     }
+    // Lazy require to avoid a circular import: PostgresDatabaseService extends
+    // BaseDatabaseService defined in this module.
+    const { PostgresDatabaseService } = require('./PostgresDatabaseService') as typeof import('./PostgresDatabaseService');
     return new PostgresDatabaseService();
   }
 }

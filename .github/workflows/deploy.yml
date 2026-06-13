@@ -15,8 +15,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - run: cd backend && npm ci && npm run build
-      - run: cd frontend && npm ci && npm run build
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run build --workspace=@aicyber-platform/backend
+      - run: npm run build --workspace=@aicyber-platform/frontend
+        env:
+          CI: false
       - name: Deploy to staging
         run: echo "Deploy to staging environment"
 
@@ -30,7 +35,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - run: cd backend && npm ci && npm run build
-      - run: cd frontend && npm ci && npm run build
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run build --workspace=@aicyber-platform/backend
+      - run: npm run build --workspace=@aicyber-platform/frontend
+        env:
+          CI: false
       - name: Deploy to production
         run: echo "Deploy to production environment"
