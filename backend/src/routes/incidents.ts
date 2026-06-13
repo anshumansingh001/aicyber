@@ -63,7 +63,8 @@ router.put('/:id/status', authorize('analyst', 'admin'), asyncHandler(async (req
   const { status } = req.body;
   const validStatuses = ['open', 'investigating', 'contained', 'resolved', 'closed'];
   if (!validStatuses.includes(status)) {
-    return res.status(400).json({ success: false, error: 'Invalid status' });
+    res.status(400).json({ success: false, error: 'Invalid status' });
+    return;
   }
 
   const updateData: Record<string, unknown> = { status, updated_at: new Date() };

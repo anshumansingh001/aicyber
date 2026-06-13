@@ -61,7 +61,8 @@ router.get('/', authenticate, authorize('admin'), asyncHandler(async (req: Reque
 router.put('/:id/role', authenticate, authorize('admin'), asyncHandler(async (req: Request, res: Response) => {
   const { role } = req.body;
   if (!['user', 'analyst', 'admin'].includes(role)) {
-    return res.status(400).json({ success: false, error: 'Invalid role' });
+    res.status(400).json({ success: false, error: 'Invalid role' });
+    return;
   }
   const user = await userRepo.update(req.params['id'] as string, { role });
   if (!user) {

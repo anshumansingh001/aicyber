@@ -85,7 +85,7 @@ export class MockDatabaseService extends BaseDatabaseService {
 // Database service factory
 export class DatabaseServiceFactory {
   static create(): DatabaseService {
-    if (process.env.USE_MOCK_DB === 'true') {
+    if (process.env['USE_MOCK_DB'] === 'true') {
       return new MockDatabaseService();
     }
     return new PostgresDatabaseService();
