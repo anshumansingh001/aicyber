@@ -5,18 +5,25 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 
-// Import configuration and utilities
 import config from './config';
 import { errorHandler } from './middleware/errorHandler';
 import { securityHeaders } from './middleware/securityHeaders';
 import { requestLogger } from './middleware/requestLogger';
+import { authenticate } from './middleware/auth';
 
-// Import route modules
 import healthRoutes from './routes/health';
 import securityRoutes from './routes/security';
 import aiSecurityRoutes from './routes/ai-security';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/users';
+import complianceRoutes from './routes/compliance';
+import analyticsRoutes from './routes/analytics';
+import incidentRoutes from './routes/incidents';
+import organizationRoutes from './routes/organizations';
+import apiKeysRoutes from './routes/api-keys';
+import alertRulesRoutes from './routes/alert-rules';
+import { setupSwagger } from './routes/api-docs';
 
-// Create Express app
 const app = express();
 
 // Security middleware
@@ -84,23 +91,25 @@ app.use(requestLogger);
 // Health check route (no authentication required)
 app.use('/health', healthRoutes);
 
-// Security routes
-app.use('/api/security', securityRoutes);
+// Auth routes (no authentication required)
+app.use('/api/auth', authRoutes);
 
-// AI-Powered Security routes
-app.use('/api/ai-security', aiSecurityRoutes);
+// Swagger API docs
+setupSwagger(app);
 
-// Placeholder routes (to be implemented)
-app.use('/api/auth', (_req, res) => {
-  res.json({ message: 'Auth routes - Coming soon' });
-});
+// Protected routes
+app.use('/api/security', authenticate, securityRoutes);
+app.use('/api/ai-security', authenticate, aiSecurityRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/compliance', authenticate, complianceRoutes);
+app.use('/api/analytics', authenticate, analyticsRoutes);
+app.use('/api/incidents', authenticate, incidentRoutes);
+app.use('/api/organizations', authenticate, organizationRoutes);
+app.use('/api/keys', authenticate, apiKeysRoutes);
+app.use('/api/alert-rules', authenticate, alertRulesRoutes);
 
-app.use('/api/users', (_req, res) => {
-  res.json({ message: 'User routes - Coming soon' });
-});
-
-// API documentation route
-app.get('/api/docs', (_req, res) => {
+// API info endpoint
+app.get('/api/docs-info', (_req, res) => {
   res.json({
     message: 'Cybersecurity Platform API',
     version: config.app.apiVersion,
@@ -108,21 +117,23 @@ app.get('/api/docs', (_req, res) => {
     endpoints: {
       auth: '/api/auth',
       security: '/api/security',
+      aiSecurity: '/api/ai-security',
       users: '/api/users',
-      health: '/health'
+      compliance: '/api/compliance',
+      analytics: '/api/analytics',
+      incidents: '/api/incidents',
+      organizations: '/api/organizations',
+      health: '/health',
+      docs: '/api/docs'
     },
-    documentation: '/api/docs/swagger'
   });
 });
 
 // Error handling middleware
 app.use('*', (_req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Route not found'
-  });
+  res.status(404).json({ success: false, error: 'Route not found' });
 });
 
 app.use(errorHandler);
 
-export default app; 
+export default app;
