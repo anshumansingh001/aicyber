@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 export async function seed(knex: Knex): Promise<void> {
   await knex('audit_logs').del();
@@ -11,8 +12,8 @@ export async function seed(knex: Knex): Promise<void> {
   await knex('sessions').del();
   await knex('users').del();
 
-  // bcrypt hash for "password123" with 12 rounds
-  const passwordHash = '$2a$12$LQv3c1yqBo9SkvXS7QTJPOoNHx2mOalYtj2B5U9rE/2pU2cR8UGSa';
+  // Hash the demo password at seed time so seeded users are always loginable.
+  const passwordHash = await bcrypt.hash('password123', 12);
 
   const adminId = crypto.randomUUID();
   const analystId = crypto.randomUUID();
