@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs-node';
 import * as natural from 'natural';
 import * as compromise from 'compromise';
-import { Sentiment } from 'sentiment';
+import Sentiment from 'sentiment';
 import { AIModelManager, AIModel } from './AIModelManager';
 import logger from '../../utils/logger';
 
