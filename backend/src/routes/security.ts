@@ -1,15 +1,37 @@
 import { Router, Request, Response } from 'express';
+import crypto from 'crypto';
 import { asyncHandler } from '../middleware/errorHandler';
 import { SecurityEventRepository } from '../repositories/SecurityEventRepository';
 import { ThreatDetectionRepository } from '../repositories/ThreatDetectionRepository';
 import { ScanRepository } from '../repositories/ScanRepository';
+import { AIAnalysisRepository } from '../repositories/AIAnalysisRepository';
 import { getWebSocketService } from '../services/realtime/WebSocketService';
+import logger from '../utils/logger';
 
 const router = Router();
 
 const eventRepo = new SecurityEventRepository();
 const threatRepo = new ThreatDetectionRepository();
 const scanRepo = new ScanRepository();
+const aiAnalysisRepo = new AIAnalysisRepository();
+
+/**
+ * Persist a threat-analytics result so it can be queried later. Best-effort:
+ * a storage failure must not break the analytics response.
+ */
+async function recordAnalysis(
+  analysisType: string,
+  input: unknown,
+  result: Record<string, unknown>,
+  confidence?: number
+): Promise<void> {
+  try {
+    const inputHash = crypto.createHash('sha256').update(JSON.stringify(input)).digest('hex');
+    await aiAnalysisRepo.storeResult(analysisType, result, 'threat-analytics-v1', confidence, inputHash);
+  } catch (error) {
+    logger.error(`Failed to persist ${analysisType} result:`, error);
+  }
+}
 
 // Device Security Assessment
 router.post('/device/assess', asyncHandler(async (req: Request, res: Response) => {
@@ -436,6 +458,8 @@ router.get('/threats/intelligence', asyncHandler(async (req: Request, res: Respo
     ]
   };
 
+  await recordAnalysis('threat_intelligence', { ioc, threatType }, intelligence, intelligence.confidence / 100);
+
   res.json({
     success: true,
     data: intelligence
@@ -532,6 +556,19 @@ router.post('/threats/ml-detection', asyncHandler(async (req: Request, res: Resp
     }
   };
 
+  // Persist each ML prediction as a threat detection and broadcast it.
+  const ws = getWebSocketService();
+  for (const prediction of mlResults.predictions) {
+    const threat = await threatRepo.create({
+      threat_type: prediction.threatType.toLowerCase(),
+      confidence: prediction.probability,
+      ai_model: `ml-detection-${mlResults.modelVersion}`,
+      details: { indicators: prediction.indicators, severity: prediction.severity },
+      status: 'active',
+    });
+    if (ws) ws.emitThreatDetection(threat as unknown as Record<string, unknown>);
+  }
+
   res.json({
     success: true,
     data: mlResults
@@ -541,25 +578,24 @@ router.post('/threats/ml-detection', asyncHandler(async (req: Request, res: Resp
 // Advanced Threat Analytics - Threat Correlation
 router.post('/threats/correlate', asyncHandler(async (req: Request, res: Response) => {
   const { events, timeframe: _timeframe, severity: _severity } = req.body;
-  
-  // Simulate threat correlation analysis
+
+  // Correlate over caller-supplied events, or fall back to the most recent
+  // real security events from the database.
+  let correlatedEvents = events;
+  if (!correlatedEvents) {
+    const recent = await eventRepo.getRecentEvents(10);
+    correlatedEvents = recent.map(e => ({
+      id: e.id,
+      type: e.type,
+      timestamp: e.created_at,
+      severity: e.severity,
+    }));
+  }
+
   const correlation = {
     timestamp: new Date().toISOString(),
     correlationId: `corr_${Date.now()}`,
-    events: events || [
-      {
-        id: 'event_001',
-        type: 'LOGIN_ATTEMPT',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-        severity: 'MEDIUM'
-      },
-      {
-        id: 'event_002',
-        type: 'FILE_ACCESS',
-        timestamp: new Date(Date.now() - 1800000).toISOString(),
-        severity: 'HIGH'
-      }
-    ],
+    events: correlatedEvents,
     patterns: [
       {
         name: 'Credential Access + Data Exfiltration',
@@ -592,6 +628,8 @@ router.post('/threats/correlate', asyncHandler(async (req: Request, res: Respons
       'Data loss prevention implementation'
     ]
   };
+
+  await recordAnalysis('threat_correlation', { events: correlatedEvents }, correlation);
 
   res.json({
     success: true,
@@ -648,6 +686,8 @@ router.post('/threats/hunt', asyncHandler(async (req: Request, res: Response) =>
       'Update detection rules'
     ]
   };
+
+  await recordAnalysis('threat_hunt', { hypothesis, scope }, huntingResults);
 
   res.json({
     success: true,
